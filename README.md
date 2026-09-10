@@ -7,7 +7,7 @@ Code for predicting clinical decompensation in initially low-acuity pediatric em
 Patients triaged as low-acuity (triage acuity 3–5) who go on to deteriorate — developing new hypoxia or hypotension, requiring intubation or vasopressors, being transferred to the ICU, or dying — are a small but clinically important subgroup. This project:
 
 1. Builds a cohort of pediatric ED visits that were initially stable at triage.
-2. Trains and compares classifiers (Random Forest, LightGBM, XGBoost, CatBoost) to predict subsequent decompensation from information available at or shortly after triage.
+2. Trains and compares classifiers (Random Forest, LightGBM, XGBoost, CatBoost, MLP) to predict subsequent decompensation from information available at or shortly after triage.
 3. Evaluates the selected model (XGBoost, AUROC ≈ 0.8) using ROC/PR curves, threshold–sensitivity tradeoffs, SHAP values, and partial dependence plots.
 4. Simulates how using the model to "uptriage" at-risk patients would affect ED length of stay and crowding, at a range of possible sensitivity thresholds.
 
