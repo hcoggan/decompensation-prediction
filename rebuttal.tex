@@ -1,0 +1,432 @@
+
+\subsection{Overall comment}
+
+We are grateful to the reviewers for their time and engagement. We have used their feedback to substantially revise the manuscript, and to address the concerns they raise below. In particular, we now discuss and thoroughly justify: the design of our composite outcome; the decision to treat the effect of crowding on emergency department length of stay as causal in our simulations; measures taken to control for clinical and temporal factors when assessing the effect of crowding on length of stay. In addition, we have reworked the simulation so that deterioration risk is recalculated dynamically in response to changes in crowding levels. We have also included: 95\% confidence intervals based on simulation-level noise and clustered visit-level bootstrapping; calibration plots; drift assessment; subgroup analyses; and analysis of intervention benefits (i.e. time-to-admission for correctly flagged patients). We now report simulated outcomes at two different sensitivity thresholds, chosen for their impact on the prolonged stay rate, a common care-quality reporting outcome. 
+
+We hope the reviewers will find our work much improved by their feedback and are happy to incorporate any further changes they suggest.
+
+\subsection{Reviewer 1}
+
+We thank the reviewer for their comments, and for taking the time to engage with our paper thoroughly and insightfully. Where they have offered a criticism or asked a question, their point is reproduced below in italics: our responses follow.
+
+
+     \textit{The biggest weakness is in the simulation claim. The LOS effects come from comparing real urgent patients with real non-urgent patients, but they are applied to non-urgent patients that the model flags, most of which are false positives. It needs more discussion and a sensitivity analysis.}
+
+We thank the reviewer for the opportunity to clarify our methods. Our LOS model is designed to quantify the effect of two variables on length of stay: `visit-type' (whether or not a patient is classified as urgent) and crowding (the `visit-types' of other patients in the ED at the same time). The LOS model is descriptive, not predictive: it is fit to all visits in the test and training cohort, it controls for variables not known at triage (including disposition and final visit diagnosis), and its individual, visit-level `predictions' are never used. The function of the LOS model is to identify the \textit{general} effects of `urgency' and crowding on a patient's LOS (i.e. that a urgent patient who will eventually be admitted will have a 11.5\% shorter stay, on average, than a non-urgent patient; see Figure 2). These effects are then used as inputs to the counterfactual simulations. The effects are fit on, and applied to, \textit{all} patients, not just non-urgent patients. This is for example how we estimate delays experienced by patients who were already classified as urgent in the real world. 
+
+Because the LOS model controls for the patient's true clinical severity as far as possible (complaint, final visit diagnosis, final ED disposition), the matrix in Figure 2a. should capture the effect on LOS of\textit{ urgent classification} over and above how sick the patient actually is. We can therefore apply them counterfactually to non-urgent patients-- even `false positives' who did not deteriorate-- to estimate what their LOS would have been, had they been uptriaged. 
+
+We have included this explanation in more detail in-text. We are very happy to include any sensitivity analyses the reviewer might consider necessary.
+
+     \textit{Benefits of up-triage are not modelled, only the cost side is simulated. The work claims "systemic effects", but the benefit (earlier assessment of true positives) is not quantified. Without it, hard to judge whether a 5 min average LOS increase is worth catching 35\% of deteriorations at roughly 20 uptriages. "Could be deployed without bottlenecks" is a one-sided conclusion.}
+
+We thank the reviewer for pointing this out. In response to this and the comments of other reviewers, we have adjusted our reporting methods, and quantified faster admission times for correctly flagged patients (a key benefit of the interventions).
+
+We now report metrics at two thresholds, chosen for their impact on the `prolonged stay' rate (i.e. the fraction of ED visits exceeding 8 hours). In the conservative-use regime, we might limit up-triages to ensure \textit{no significant difference} in prolonged stay rate. This would allow a maximum operating sensitivity of 1.5\% (0.9-2.3\%) and specificity of 99.9\% (99.9-100\%). This would have no affect on ED LOS overall or for urgent visits, but would reduce time to admission for true positives (i.e. correctly up-triaged patients) by an average of 55 minutes [95\% CI 34-85 mins]. 
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Change in ED length of stay (LOS) by visit type at  1.5\% mean model sensitivity, the lowest threshold with no significant increase in the prolonged stay rate (LOS $>$ 8\,h). Values are means with 95\% bootstrap confidence intervals in brackets; negative values indicate shorter stays.}
+\label{tab:los_visit_type_0}
+\begin{tabular}{lr}
+\toprule
+ & Change in ED LOS (min) \\
+\midrule
+Overall & $-0.07$ [$-0.11$, $-0.03$] \\
+\addlinespace
+\textit{Original visit type} & \\
+\quad Urgent, admitted & $\phantom{-}0.16$ [$-0.06$, $\phantom{-}0.35$] \\
+\quad Urgent, discharged & $-0.12$ [$-0.19$, $-0.06$] \\
+\quad Non-urgent, admitted & $-0.20$ [$-0.30$, $-0.11$] \\
+\quad Non-urgent, discharged & $-0.08$ [$-0.10$, $-0.05$] \\
+\addlinespace
+\textit{Counterfactual visit type} & \\
+\quad Urgent, admitted & $\phantom{-}0.02$ [$-0.19$, $\phantom{-}0.23$] \\
+\quad Urgent, discharged & $\phantom{-}0.05$ [$-0.07$, $\phantom{-}0.17$] \\
+\quad Non-urgent, admitted & $\phantom{-}0.02$ [$-0.05$, $\phantom{-}0.08$] \\
+\quad Non-urgent, discharged & $-0.11$ [$-0.14$, $-0.10$] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+Alternatively, in a `liberal-use' regime, we might require that up-triages increase prolonged stay rate by an amount \textit{not significantly greater than 1\%}. This would allow a mean sensitivity of 49\% (46-51\%) and specificity of 89\% (89-89\%). The average visit would be approximately 11 minutes longer [8.1-13 mins], but correctly-flagged patients would be admitted 23 minutes faster [10-34 mins]. 
+    
+\begin{table}[htbp]
+\centering
+\small
+\caption{Change in ED length of stay (LOS) by visit type at 49\% mean model sensitivity, the lowest threshold with a change in the prolonged stay rate not significantly greater than 1\%. Values are means with 95\% bootstrap confidence intervals in brackets; negative values indicate shorter stays.}
+\label{tab:los_visit_type_0.01}
+\begin{tabular}{lr}
+\toprule
+ & Change in ED LOS (min) \\
+\midrule
+Overall & $\phantom{-}10.59$ [$\phantom{-}8.09$, $\phantom{-}13.15$] \\
+\addlinespace
+\textit{Original visit type} & \\
+\quad Urgent, admitted & $\phantom{-}52.51$ [$\phantom{-}43.90$, $\phantom{-}63.15$] \\
+\quad Urgent, discharged & $\phantom{-}11.23$ [$\phantom{-}5.34$, $\phantom{-}17.93$] \\
+\quad Non-urgent, admitted & $\phantom{-}8.50$ [$\phantom{-}4.12$, $\phantom{-}13.36$] \\
+\quad Non-urgent, discharged & $\phantom{-}4.27$ [$\phantom{-}2.86$, $\phantom{-}5.95$] \\
+\addlinespace
+\textit{Counterfactual visit type} & \\
+\quad Urgent, admitted & $\phantom{-}38.58$ [$\phantom{-}30.10$, $\phantom{-}48.67$] \\
+\quad Urgent, discharged & $\phantom{-}35.85$ [$\phantom{-}30.14$, $\phantom{-}42.58$] \\
+\quad Non-urgent, admitted & $\phantom{-}24.64$ [$\phantom{-}19.48$, $\phantom{-}30.40$] \\
+\quad Non-urgent, discharged & $-4.52$ [$-5.93$, $-2.98$] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+We note that a further benefit, though difficult to model, is that up-triaged patients will be often be seen in a different physical area of the ED (i.e. taken out of the `fast-track' room designated for non-urgent patients). Patients classified as urgent are monitored more closely, and this increased attention may prevent the predicted deterioration from occurring in the first place.
+
+\textit{     No uncertainty on simulation outputs.}
+
+In response to this comment, as well as feedback from other reviewers, we have changed the way uncertainty is quantified and reported. For each of 200 simulations, we generate simulation-level noise from a random seed and a day-level random bootstrap for visits in the test set (to allow for interdependence in LOS between same-day visits). These bootstrapped confidence intervals are now reported throughout the manuscript (including in the tables above).
+\textit{
+     No calibration, no drift analysis across a split that spans the pandemic, no subgroup or fairness analysis despite race, language and insurance being both motivation and inputs.}
+
+    We thank the reviewer for these suggestions. We have now included all of these analyses in the paper. The model was well-calibrated, with an expected calibration error (ECE) of 0.22\% when visits were grouped by predicted risk decile and a calibration slope of 0.92. Model performance did not differ by sex, race/ethnicity, preferred language, or year of arrival, though AUROC was slightly higher for patients with public insurance. The robustness to year-of-arrival suggests the model does not suffer from significant drift; the low prevalence of our target outcome prevented us from performing more granular drift analyses.
+
+We also add subgroup analyses for the simulation outputs described above. For example, at the 49\% sensitivity threshold, induced delays would be similar between male and female patients and between the publicly- and privately-insured, but would be longer for Non-Hispanic White and English-speaking patients than for Hispanic and Spanish-speaking patients respectively (see table below).
+
+ \begin{table}[htbp]
+\centering
+\small
+\caption{Change in ED length of stay (LOS) by patient characteristics at 48.6\% model sensitivity, the lowest threshold with a change in the prolonged stay rate not significantly greater than 1\%. Values are means with 95\% bootstrap confidence intervals in brackets; negative values indicate shorter stays.}
+\label{tab:los_demographics_0.01}
+\begin{tabular}{lr}
+\toprule
+ & Change in ED LOS (min) \\
+\midrule
+Overall & $\phantom{-}10.59$ [$\phantom{-}8.09$, $\phantom{-}13.15$] \\
+\addlinespace
+{\textit{Sex}} & \\
+\quad Female & $\phantom{-}10.89$ [$\phantom{-}8.29$, $\phantom{-}13.58$] \\
+\quad Male & $\phantom{-}10.31$ [$\phantom{-}7.89$, $\phantom{-}12.79$] \\
+\addlinespace
+{\textit{Race}} & \\
+\quad Hispanic & $\phantom{-}7.05$ [$\phantom{-}4.82$, $\phantom{-}9.37$] \\
+\quad Non-Hispanic Black & $\phantom{-}9.86$ [$\phantom{-}7.03$, $\phantom{-}12.91$] \\
+\quad Non-Hispanic White & $\phantom{-}14.33$ [$\phantom{-}11.39$, $\phantom{-}17.46$] \\
+\quad Other/Unknown & $\phantom{-}9.99$ [$\phantom{-}7.77$, $\phantom{-}12.32$] \\
+\addlinespace
+{\textit{Language}} & \\
+\quad English & $\phantom{-}11.64$ [$\phantom{-}9.01$, $\phantom{-}14.36$] \\
+\quad Spanish & $\phantom{-}4.97$ [$\phantom{-}3.15$, $\phantom{-}7.35$] \\
+\quad Other & $\phantom{-}9.34$ [$\phantom{-}6.63$, $\phantom{-}11.55$] \\
+\addlinespace
+{\textit{Insurance}} & \\
+\quad Public & $\phantom{-}8.50$ [$\phantom{-}6.07$, $\phantom{-}10.84$] \\
+\quad Private & $\phantom{-}13.00$ [$\phantom{-}10.27$, $\phantom{-}15.91$] \\
+\bottomrule
+\end{tabular}
+\end{table}
+\textit{
+     The Figure 1 caption does not match the panels. The caption says (a) SHAP, (b) partial dependence, (c) NNS. The panels are actually (a) NNS, (b) SHAP, (c) partial dependence.}
+
+    We apologise for the error and thank the reviewer for their attention to detail. This has now been fixed.
+
+\textit{     A sentence is cut off at lines 379 to 380 ("...and meaningful information is lost when").}
+
+    This has also now been fixed.
+
+\textit{     How would an up-triaged but stable child actually be managed at your site? If they are seen within 15 minutes and returned to fast track, the +56\% LOS coefficient is probably far too high.}
+
+`Urgent' or `non-urgent' classification is a function of ESI score, which is (currently) determined once at triage and never adjusted. In deployment the model would flag patients for up-triage almost immediately. Once reclassified, they would be treated as any other urgent patient from then on. Stability would have relatively little bearing on this, as the model is designed to flag high-risk patients who appear `deceptively stable' at triage. 
+
+For example, an up-triaged patient taken out of the fast track room would never be returned there, and would be monitored closely until admission or discharge. For this reason, we assume that the effects of up-triage on LOS persist through the visit.
+
+\textit{     Why 35\% sensitivity? Was it chosen from the simulation curve after the fact, and by what rule?
+}
+We thank the reviewer for flagging this; it was chosen somewhat arbitrarily to give an example of the maximum sensitivity that could be achieved for a given (low) impact on ED LOS. We now report on two different thresholds based on their impact on the prolonged stay rate (no significant change and a change no greater than 1\%; see above). Prolonged stay rate is a common reporting metric and was included in a CMS final rule on ED care quality last year \url{https://www.d2ihc.com/ecat-ecqm-ed-metrics-opps-2026/}, and so our current evaluation is more robust to the real-world needs of hospital administrators.
+    
+\textit{     Can you add a benefit measure to the simulation, even a crude one (for example minutes from arrival to first clinician contact for true positives)?}
+
+    We do not have detailed timestamp information on clinician contact, but now report changes in time-to-admission for correctly flagged patients (as discussed above).
+
+
+
+\subsection{Reviewer 2}
+
+We thank the reviewer for their comments, and for taking the time to engage with our paper thoroughly and insightfully. Where they have offered a criticism or asked a question, their point is reproduced below in italics: our responses follow.
+
+
+\textit{     The simulation treats the estimated relationship between crowding and LOS as though it were causal. These estimates come from observational data, and factors such as staffing, time of day, season, and case mix could influence both crowding and LOS. Using the estimates in a simulation does not remove that confounding.}
+
+We thank the reviewer for the opportunity to clarify this. While we do not have information on staffing levels, we do control for season, time of day, day of week (weekend/weekday), year, and chief complaint. As a proxy for case mix, we split crowding by urgency and disposition (i.e. fit separate crowding effects to urgent-admitted, urgent-discharged, non-urgent-admitted, and non-urgent-discharged visits), and assume each has a separate effect on focal visit type (i.e. that urgent-admitted visits experience a different crowding effect from other concurrent urgent-admitted visits than from concurrent non-urgent-admitted visits). This is a 4x4 interaction matrix and it would not be feasible to extend this to include the interaction between every pair of chief complaints (as would be necessary to fully account for case mix).
+
+We do assume that crowding effects extracted from observational data are causal when we use them as inputs to our simulation. While we cannot prove causation, we have strong \textit{a priori} reasons to believe that crowding does increase ED length of stay: unless ED crowding correlates with unobserved sources of variation in hospital resources (i.e. staffing levels), which is unlikely, a large influx of patients in the ED will force clinicians to divide their time between more patients and delay necessary care. By controlling for chief complaint, visit type, seasonal and temporal factors in our LOS model, we aimed to isolate this causal component, though we admit that we may be biased by unobserved confounders.
+
+In future work, we hope to further control for the affect hospital-wide occupancy rates, NEDOCS scores, or staffing levels, none of which were available to us during this study. We thank the reviewer for their comment and have included further discussion on this in the Limitations section of our manuscript.
+
+\textit{    
+     The model used to estimate LOS changes in the simulation does not appear to have been validated. The authors should report its calibration/discrimination on held-out data, as well as whether the simulation reproduces observed LOS and crowding patterns. Without these checks, it is difficult to judge how much confidence to place in the simulated effects of up-triage.
+}
+
+We thank the reviewer for the opportunity to clarify our methods. Our LOS model is designed to quantify the effect of two variables on length of stay: `visit-type' (whether or not a patient is classified as urgent) and crowding (the `visit-types' of other patients in the ED at the same time). The LOS model is descriptive, not predictive. As such, it is fit to all visits in the test and training cohort, it controls for variables not known at triage (including disposition and final visit diagnosis). Its individual, visit-level `predictions' are never used and are not relevant. The function of the LOS model is to identify the \textit{general} effects of `urgency' and crowding on a patient's LOS (i.e. that a urgent patient who will eventually be admitted will have a 11.5\% shorter stay, on average, than a non-urgent patient; see Figure 2). These effects are then used as inputs to the counterfactual simulations. The effects are fit on, and applied to, \textit{all} patients, not just non-urgent patients. This is for example how we estimate delays experienced by patients who were already classified as urgent in the real world. 
+
+Because the LOS model controls for the patient's true clinical severity as far as possible (complaint, final visit diagnosis, final ED disposition), the matrix in Figure 2a. should capture the effect on LOS of\textit{ urgent classification} over and above how sick the patient actually is. We can therefore apply them counterfactually to non-urgent patients-- even `false positives' who did not deteriorate-- to estimate what their LOS would have been, had they been uptriaged. 
+
+We have included this explanation in more detail in-text. 
+
+    
+\textit{     Mean imputation was performed separately in the training and test cohorts. The means should instead be estimated from the training data and applied to the test data. The current approach uses information from the test cohort that would not be available when patients arrive one at a time.}
+
+We thank the reviewer for catching this, which was an error in the text rather than the methods. It should have said that means used during the imputation process were be calculated on the training dataset alone, and applied separately to the training and test cohort. (We emphasise that imputation is used only for the multilayer perceptron; other models, including the XGBoost Classifier on which the final deterioration prediction model is built, can handle missing values directly). We have now edited the text to clarify this.
+
+\textit{     The simulated LOS changes are reported without uncertainty intervals.}
+
+In response to this comment, as well as feedback from other reviewers, we have changed the way uncertainty is quantified and reported. For each of 200 simulations, we generate simulation-level noise from a random seed and a day-level random bootstrap for visits in the test set (to allow for interdependence in LOS between same-day visits). These bootstrapped confidence intervals are now reported throughout the manuscript, including in the plots.
+
+\textit{    
+     The composite outcome also needs more justification. It was developed for this study and combines new unstable vital signs, intubation, vasoactive treatment, ICU admission, and in-hospital death. Without a validated definition or core outcome set, comparisons with other studies are difficult.}
+
+The composite outcome was developed by the first author (a computational biology PhD) in collaboration with the second and third authors (both emergency pediatricians, including a fellow working in the study ED). Outcomes from other studies could not be copied exactly, because our setting and available data did not match any study of which we were aware, but we aimed to match comparator studies wherever possible. Our closest comparators are Ha \textit{et. al.} \url{https://publications.aap.org/hospitalpediatrics/article/16/8/e617/208272/Early-Prediction-of-Critical-Care-Interventions}, cited in-text) and Strutz \textit{et. al.} (\url{https://jamanetwork.com/journals/jamanetworkopen/fullarticle/2834654}), both of which include critical care events which take place in the inpatient setting. Both of these studies tracked intubation (lacking direct records, we infer this from the presence of certain medications) and vasopressor administration, which we incorporate into our outcome. As we did not have detailed records of life-saving interventions performed in-hospital, we treat ICU transfer and death as proxies.
+
+Both of the comparator studies include urgent or hospitalised patients. Because our aim is slightly different-- we aim to predict non-urgent patients who \textit{should be urgent}-- we also include deteriorations in vital signs that would trigger immediate clinical attention. On the advice of clinical coauthors, we included a conservative definition of hypotension set 5mmHg below the PALS criterion. The criterion itself described a double-digit percentage of non-urgent patients, and our clinical coauthors said they would not find this inherently concerning. Similarly, we used a conservative definition of hypoxia (SpO2 \(<\) 85\%) based on the experience of clinical coauthors. We are happy to include this explanation in-text.
+    
+\textit{     The exclusion of patients who left without being seen or against medical advice may introduce selection bias. Leaving the ED could be related to crowding, and these patients may also include children who were under-triaged.}
+
+We fully agree with the reviewer that this is a limitation of our study.  Patients who left without being seen suffer from high rates of missing data, and sometimes do not have a triage classification or reliable departure time, so would be very difficult to include in our simulations. If included, we would also have had to simulate whether or not patients would leave at the same \textit{time} without being seen, or whether patients who stayed in real life might have left under counterfactual crowding levels, both of which we considered outside the scope of this study. Clinical coauthors confirmed that it is highly likely that children who deteriorated (i.e. confirmed under-triages) would be taken out of the ED against medical advice, which should limit selection bias. This is one advantage of the conservative definition of `deterioration' we adopt in this study.
+
+We further note that this exclusion likely leads us to overestimate the effect of crowding on visit length of stay (by `under-counting' patients during periods of high crowding, when patients are more likely to leave without being seen), which in turn increases our estimates of the adverse impact of our model. This will drive more conservative deployment, which may be clinically desirable.
+
+\textit{     The decision to hold deterioration risk constant across crowding levels is attributed to computational cost, but the paper does not explain why simulations that relax this assumption would be impractical.}
+
+We thank the reviewer for this comment. In response to this, we have redesigned the simulations so that deterioration risk is dynamically recalculated in response to changes in crowding levels. Our results are not substantially changed by this.
+\textit{
+     The paper also needs calibration and subgroup analyses. The authors should examine whether performance and potential harms differ across patient groups.}
+
+We thank the reviewer for these suggestions. We have now included all of these analyses in the paper. The model was well-calibrated, with an expected calibration error (ECE) of 0.22\% when visits were grouped by predicted risk decile and a calibration slope of 0.92. Model performance did not differ by sex, race/ethnicity, preferred language, or year of arrival, though AUROC was slightly higher for patients with public insurance. The robustness to year-of-arrival suggests the model does not suffer from significant drift; the low prevalence of our target outcome prevented us from performing more granular drift analyses.
+
+We have also added subgroup analyses of the effect on LOS of simulated intervention. In response to reviewer feedback, we now report metrics at two thresholds, chosen for their impact on the `prolonged stay' rate (i.e. the fraction of ED v\textbf{}isits exceeding 8 hours). In the conservative-use regime, we might limit up-triages to ensure \textit{no significant difference} in prolonged stay rate. This would allow a maximum operating sensitivity of 1.5\% (0.9-2.3\%) and specificity of 99.9\% (99.9-100\%). This would have no affect on ED LOS overall or for urgent visits, but would reduce time to admission for true positives (i.e. correctly up-triaged patients) by an average of 55 minutes [95\% CI 34-85 mins].  in a `liberal-use' regime, we might require that up-triages increase prolonged stay rate by an amount \textit{not significantly greater than 1\%}. This would allow a mean sensitivity of 49\% (46-51\%) and specificity of 89\% (89-89\%). The average visit would be approximately 11 minutes longer [8.1-13 mins], but correctly-flagged patients would be admitted 23 minutes faster [10-34 mins]. At this sensitivity threshold, induced delays would be similar between male and female patients and between the publicly- and privately-insured, but would be longer for Non-Hispanic White and English-speaking patients than for Hispanic and Spanish-speaking patients respectively (see table below).
+
+ \begin{table}[htbp]
+\centering
+\small
+\caption{Change in ED length of stay (LOS) by patient characteristics at 48.6\% model sensitivity, the lowest threshold with a change in the prolonged stay rate not significantly greater than 1\%. Values are means with 95\% bootstrap confidence intervals in brackets; negative values indicate shorter stays.}
+\label{tab:los_demographics_0.01}
+\begin{tabular}{lr}
+\toprule
+ & Change in ED LOS (min) \\
+\midrule
+Overall & $\phantom{-}10.59$ [$\phantom{-}8.09$, $\phantom{-}13.15$] \\
+\addlinespace
+{\textit{Sex}} & \\
+\quad Female & $\phantom{-}10.89$ [$\phantom{-}8.29$, $\phantom{-}13.58$] \\
+\quad Male & $\phantom{-}10.31$ [$\phantom{-}7.89$, $\phantom{-}12.79$] \\
+\addlinespace
+{\textit{Race}} & \\
+\quad Hispanic & $\phantom{-}7.05$ [$\phantom{-}4.82$, $\phantom{-}9.37$] \\
+\quad Non-Hispanic Black & $\phantom{-}9.86$ [$\phantom{-}7.03$, $\phantom{-}12.91$] \\
+\quad Non-Hispanic White & $\phantom{-}14.33$ [$\phantom{-}11.39$, $\phantom{-}17.46$] \\
+\quad Other/Unknown & $\phantom{-}9.99$ [$\phantom{-}7.77$, $\phantom{-}12.32$] \\
+\addlinespace
+{\textit{Language}} & \\
+\quad English & $\phantom{-}11.64$ [$\phantom{-}9.01$, $\phantom{-}14.36$] \\
+\quad Spanish & $\phantom{-}4.97$ [$\phantom{-}3.15$, $\phantom{-}7.35$] \\
+\quad Other & $\phantom{-}9.34$ [$\phantom{-}6.63$, $\phantom{-}11.55$] \\
+\addlinespace
+{\textit{Insurance}} & \\
+\quad Public & $\phantom{-}8.50$ [$\phantom{-}6.07$, $\phantom{-}10.84$] \\
+\quad Private & $\phantom{-}13.00$ [$\phantom{-}10.27$, $\phantom{-}15.91$] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\textit{ Additional Comments And Questions:}
+\textit{     How was the composite outcome derived and validated? Why was an established outcome definition not used?}
+
+Please see our response above.
+
+\textit{     Why was imputation fitted separately on the test set? Do the results change when it is fitted on the training set only?}
+
+Please see our response above.
+
+\textit{     How many patients left without being seen or against medical advice, and how does excluding them affect the results?
+}
+During preprocessing, a total of 5,606 visits (of 348,872, i.e. 1.6\%) are excluded because of a disposition other than `admission' or `discharge' (i.e. leaving against medical advice, etc.) Please see our response above for a discussion of how this exclusion affects our results.
+
+\textit{     How do you account for confounding in the crowding–LOS estimates?}
+
+The log-linear LOS model adjusts for temporal factors, demographic factors (race, sex, age group, insurance source, language, miles travelled to the hospital), and medical factors (presence of physician referral, ED arrival mode, number of previous recent admissions/ED visits, chief complaint, previous and visit diagnoses).  
+\textit{
+     Can you give the full formula for the LOS adjustment and report uncertainty intervals for the simulated outcomes?}
+
+We thank the reviewer for this suggestion. 95\% confidence intervals are now reported for all simulation outputs (see responses above). We have also added a fuller description of the LOS adjustment to the text, which we reproduce below.
+
+Within the counterfactual simulations, we assumed that all demographic (sex, race, age), clinical (chief complaint, mode of arrival) and temporal (season, year) factors were unchanged, along with visit-level random variation in LOS. We described each visit using a 19-element vector \(s\). The first three elements were binary and described the focal visit-type \(a_s\) ([0, 0, 0] described a non-urgent, admitted visit). The other 16 elements described the interaction between possible focal visit type and visit-type specific crowding (4 x 4 terms). Any change in a patient's visit type or in the number or type of visits ongoing when they arrived would result in a change in \(s\) (i.e. \(s_{sim}\), the counterfactual state, different from \(s_{real}\), the real-world state). 
+
+Regression of LOS onto this vector \(s\) gave a vector \(v\) with known mean and covariance, describing the effect of focal visit type and crowding on a patient's log-length of stay. For each of 200 random seeds, we drew a vector \(v'\) from the distribution \(N(\mathbb{E}[v], \operatorname{Cov}{v})\) to account for simulation-level noise. For each visit within that simulation, then, the counterfactual length of stay \(LOS_{sim}\) was given by 
+\[\text{LOS}_\text{sim} = LOS_{real}  \times \exp[v' \cdot (s_{sim}-s_{real} )]\]
+where \(LOS_{real}\) was the real-world length of stay.  The counterfactual length of stay depended on whether the visit had been `switched' from its real-world visit type (only applicable to up-triaged patients) and on whether crowding had shifted from its real-world distribution (applicable to all visits, including originally-urgent visits, because of the downstream effects of previous up-triages). The simulation iterated over each visit, up-triaged according to dynamic prediction risk at a given risk threshold, and adjusted LOS where necessary. By design, at a sensitivity of 0 (i.e. with no uptriages), the simulation replicated the real-world LOS and crowding patterns exactly. We measured the change in ED LOS over the test set period using 95\% bootstrapped confidence intervals. Visits were clustered into 24-hour blocks before bootstrapping to account for interdependence in LOS induced by crowding. Each random seed therefore determined both the simulation-level noise in switching and crowding effects and the bootstrap draw.
+
+\textit{
+     What deployment or prospective validation is planned?}
+This is recent work; we hope to present it to hospital colleagues in detail after we have incorporated feedback from the peer review process.
+
+
+
+We appreciate the reviewer’s time and feedback on our paper. If we have sufficiently addressed their critiques, we hope the reviewer will consider revising their score.
+
+
+\subsection{Reviewer 3}
+
+We thank the reviewer for their comments, and for taking the time to engage with our paper thoroughly and insightfully. Where they have offered a criticism or asked a question, their point is reproduced below in italics: our responses follow.
+
+
+     \textit{Association-level coefficients are treated as causal effects. Specifically, the switching effect is confounded by disease severity and clinical workup needs. The models also adjust for post-triage information like diagnoses.}
+
+
+We thank the reviewer for the opportunity to clarify our methods. Our LOS model is designed to quantify the effect of two variables on length of stay: `visit-type' (whether or not a patient is classified as urgent) and crowding (the `visit-types' of other patients in the ED at the same time). The LOS model is descriptive, not predictive. As such, it is fit to all visits in the test and training cohort, it controls for variables not known at triage (including disposition and final visit diagnosis). Its individual, visit-level `predictions' are never used and are not relevant. The function of the LOS model is to identify the \textit{general} effects of `urgency' and crowding on a patient's LOS (i.e. that a urgent patient who will eventually be admitted will have a 11.5\% shorter stay, on average, than a non-urgent patient; see Figure 2). These effects are then used as inputs to the counterfactual simulations.
+
+Because the LOS model controls for the patient's true clinical severity as far as possible (complaint, final visit diagnosis, final ED disposition), the matrix in Figure 2a. should capture the effect on LOS of\textit{ urgent classification} over and above how sick the patient actually is. We can therefore apply them counterfactually to non-urgent patients-- even `false positives' who did not deteriorate-- to estimate what their LOS would have been, had they been uptriaged. 
+
+We do assume that crowding effects extracted from observational data are causal when we use them as inputs to our simulation. While we cannot prove causation, we have strong \textit{a priori} reasons to believe that crowding does increase ED length of stay: unless ED crowding correlates with unobserved sources of variation in hospital resources (i.e. staffing levels), which is unlikely, a large influx of patients in the ED will force clinicians to divide their time between more patients and delay necessary care. By controlling for chief complaint, visit type, seasonal and temporal factors in our LOS model, we aimed to isolate this causal component, though we admit that we may be biased by unobserved confounders.
+
+
+\textit{     The discrete event model does not account for important factors like bed availability, queues, and potential saturation.}
+
+In future work, we hope to further control for the affect hospital-wide occupancy rates, NEDOCS scores, or staffing levels, none of which were available to us during this study. Other models may also include more complex nonlinear descriptions of the effect of crowding on LOS (e.g. saturating functions); but we assumed a linear relationship here for simplicity. We note that patients in the ED are not seen or admitted in order of their arrival, but are seen based on severity, specific clinical needs, availability of beds in the relevant admitting service, and so on. This limits the utility of queuing-based models.
+
+We thank the reviewer for their comment and have included further discussion on this in the Limitations section of our manuscript.
+
+\textit{     XGBoost is selected from other models based on AUROC on a test set, but operating thresholds are based on the same test set.}
+
+We thank the reviewer for raising this point. We used a hierarchical approach to model selection here: as AUROC is a threshold-independent metric, we used this to select the model class before deciding the specific threshold at which it should operate. We are happy to consider alternative approaches the reviewer would consider preferable. We note that the low prevalence of the outcome under study meant that we tried to avoid dividing our study period more finely than necessary.
+
+\textit{     Bootstrap CIs should resample at patient level, not visit level.}
+
+In response to this comment, as well as feedback from other reviewers, we have changed the way uncertainty is quantified and reported. For each of 200 simulations, we generate simulation-level noise from a random seed and a day-level random bootstrap for visits in the test set (to allow for interdependence in LOS between same-day visits). These bootstrapped confidence intervals are now reported throughout the manuscript, including in the plots.
+
+     It is not clear what simulation uncertainty was.
+
+Please see our response above.
+
+\textbf{Additional Comments And Questions:}
+
+
+\textit{     What do the simulation seeds actually sample?}
+Please see our response above.
+ 
+\textit{     How do the findings depend on insurance, race, language?}
+
+We thank the reviewer for these suggestions. We have now included all of these analyses in the paper. The model was well-calibrated, with an expected calibration error (ECE) of 0.22\% when visits were grouped by predicted risk decile and a calibration slope of 0.92. Model performance did not differ by sex, race/ethnicity, preferred language, or year of arrival, though AUROC was slightly higher for patients with public insurance. The robustness to year-of-arrival suggests the model does not suffer from significant drift; the low prevalence of our target outcome prevented us from performing more granular drift analyses.
+
+We have also added subgroup analyses of the effect on LOS of simulated intervention. In response to reviewer feedback, we now report metrics at two thresholds, chosen for their impact on the `prolonged stay' rate (i.e. the fraction of ED visits exceeding 8 hours). In the conservative-use regime, we might limit up-triages to ensure \textit{no significant difference} in prolonged stay rate. This would allow a maximum operating sensitivity of 1.5\% (0.9-2.3\%) and specificity of 99.9\% (99.9-100\%). This would have no affect on ED LOS overall or for urgent visits, but would reduce time to admission for true positives (i.e. correctly up-triaged patients) by an average of 55 minutes [95\% CI 34-85 mins].  in a `liberal-use' regime, we might require that up-triages increase prolonged stay rate by an amount \textit{not significantly greater than 1\%}. This would allow a mean sensitivity of 49\% (46-51\%) and specificity of 89\% (89-89\%). The average visit would be approximately 11 minutes longer [8.1-13 mins], but correctly-flagged patients would be admitted 23 minutes faster [10-34 mins]. At this sensitivity threshold, induced delays would be similar between male and female patients and between the publicly- and privately-insured, but would be longer for Non-Hispanic White and English-speaking patients than for Hispanic and Spanish-speaking patients respectively (see table below).
+
+ \begin{table}[htbp]
+\centering
+\small
+\caption{Change in ED length of stay (LOS) by patient characteristics at 48.6\% model sensitivity, the lowest threshold with a change in the prolonged stay rate not significantly greater than 1\%. Values are means with 95\% bootstrap confidence intervals in brackets; negative values indicate shorter stays.}
+\label{tab:los_demographics_0.01}
+\begin{tabular}{lr}
+\toprule
+ & Change in ED LOS (min) \\
+\midrule
+Overall & $\phantom{-}10.59$ [$\phantom{-}8.09$, $\phantom{-}13.15$] \\
+\addlinespace
+{\textit{Sex}} & \\
+\quad Female & $\phantom{-}10.89$ [$\phantom{-}8.29$, $\phantom{-}13.58$] \\
+\quad Male & $\phantom{-}10.31$ [$\phantom{-}7.89$, $\phantom{-}12.79$] \\
+\addlinespace
+{\textit{Race}} & \\
+\quad Hispanic & $\phantom{-}7.05$ [$\phantom{-}4.82$, $\phantom{-}9.37$] \\
+\quad Non-Hispanic Black & $\phantom{-}9.86$ [$\phantom{-}7.03$, $\phantom{-}12.91$] \\
+\quad Non-Hispanic White & $\phantom{-}14.33$ [$\phantom{-}11.39$, $\phantom{-}17.46$] \\
+\quad Other/Unknown & $\phantom{-}9.99$ [$\phantom{-}7.77$, $\phantom{-}12.32$] \\
+\addlinespace
+{\textit{Language}} & \\
+\quad English & $\phantom{-}11.64$ [$\phantom{-}9.01$, $\phantom{-}14.36$] \\
+\quad Spanish & $\phantom{-}4.97$ [$\phantom{-}3.15$, $\phantom{-}7.35$] \\
+\quad Other & $\phantom{-}9.34$ [$\phantom{-}6.63$, $\phantom{-}11.55$] \\
+\addlinespace
+{\textit{Insurance}} & \\
+\quad Public & $\phantom{-}8.50$ [$\phantom{-}6.07$, $\phantom{-}10.84$] \\
+\quad Private & $\phantom{-}13.00$ [$\phantom{-}10.27$, $\phantom{-}15.91$] \\
+\bottomrule
+\end{tabular}
+\end{table}
+\subsection{Reviewer 4}
+
+
+We thank the reviewer for their comments, and for taking the time to engage with our paper thoroughly and insightfully. Where they have offered a criticism or asked a question, their point is reproduced below in italics: our responses follow.
+
+
+\textit{     According to my understanding, the pipeline described in the paper appears to treat the predicted deterioration risk as fixed for each visit, while dynamically updating downstream effects such as LOS and crowding (Figure 3). However, ED crowdedness also appears to be an input feature to the XGBoost model for risk prediction (Figure 1b). I therefore wonder whether the crowdedness value used in the risk prediction model is (a) held fixed during the simulation or (b) updated based on the simulated changes in crowdedness (so that risk predictions are recalculated iteratively). If (a) better describes the current pipeline, I would be interested in the authors’ comments on the potential impact of omitting this feedback effect. Otherwise, I would suggest clarifying the description of the simulation pipeline to make the pipeline explicit.}
+
+We thank the reviewer for this comment. In response to this, we have redesigned the simulations so that deterioration risk is dynamically recalculated in response to changes in crowding levels (i.e. their Option B; It was initially held constant, i.e. their Option A). Our results are not substantially changed by this.
+
+\textit{
+     I would also appreciate some additional clinical/operational context for interpreting the reported simulation effects, for example the increased visit duration and delayed urgent admission. To me, it would be helpful to contextualize whether changes of these magnitudes would generally be considered operationally or clinically meaningful or non-harmful, for example with reference to existing clinical guidelines, hospital performance benchmarks, or evaluations of comparable decision-support interventions.}
+
+We thank the reviewer for flagging this. We now report on two different operating thresholds based on their impact on the prolonged stay rate [LOS greater than 8 hours]. Prolonged stay rate is a common reporting metric and was included in a CMS final rule on ED care quality last year \url{https://www.d2ihc.com/ecat-ecqm-ed-metrics-opps-2026/}, and so our current evaluation is more robust to the real-world needs of hospital administrators.
+
+In the conservative-use regime, we might limit up-triages to ensure \textit{no significant difference} in prolonged stay rate. This would allow a maximum operating sensitivity of 1.5\% (0.9-2.3\%) and specificity of 99.9\% (99.9-100\%). This would have no affect on ED LOS overall or for urgent visits, but would reduce time to admission for true positives (i.e. correctly up-triaged patients) by an average of 55 minutes [95\% CI 34-85 mins]. 
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Change in ED length of stay (LOS) by visit type at  1.5\% mean model sensitivity, the lowest threshold with no significant increase in the prolonged stay rate (LOS $>$ 8\,h). Values are means with 95\% bootstrap confidence intervals in brackets; negative values indicate shorter stays.}
+\label{tab:los_visit_type_0}
+\begin{tabular}{lr}
+\toprule
+ & Change in ED LOS (min) \\
+\midrule
+Overall & $-0.07$ [$-0.11$, $-0.03$] \\
+\addlinespace
+\textit{Original visit type} & \\
+\quad Urgent, admitted & $\phantom{-}0.16$ [$-0.06$, $\phantom{-}0.35$] \\
+\quad Urgent, discharged & $-0.12$ [$-0.19$, $-0.06$] \\
+\quad Non-urgent, admitted & $-0.20$ [$-0.30$, $-0.11$] \\
+\quad Non-urgent, discharged & $-0.08$ [$-0.10$, $-0.05$] \\
+\addlinespace
+\textit{Counterfactual visit type} & \\
+\quad Urgent, admitted & $\phantom{-}0.02$ [$-0.19$, $\phantom{-}0.23$] \\
+\quad Urgent, discharged & $\phantom{-}0.05$ [$-0.07$, $\phantom{-}0.17$] \\
+\quad Non-urgent, admitted & $\phantom{-}0.02$ [$-0.05$, $\phantom{-}0.08$] \\
+\quad Non-urgent, discharged & $-0.11$ [$-0.14$, $-0.10$] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+Alternatively, in a `liberal-use' regime, we might require that up-triages increase prolonged stay rate by an amount \textit{not significantly greater than 1\%}. This would allow a mean sensitivity of 49\% (46-51\%) and specificity of 89\% (89-89\%). The average visit would be approximately 11 minutes longer [8.1-13 mins], but correctly-flagged patients would be admitted 23 minutes faster [10-34 mins]. 
+    
+\begin{table}[htbp]
+\centering
+\small
+\caption{Change in ED length of stay (LOS) by visit type at 49\% mean model sensitivity, the lowest threshold with a change in the prolonged stay rate not significantly greater than 1\%. Values are means with 95\% bootstrap confidence intervals in brackets; negative values indicate shorter stays.}
+\label{tab:los_visit_type_0.01}
+\begin{tabular}{lr}
+\toprule
+ & Change in ED LOS (min) \\
+\midrule
+Overall & $\phantom{-}10.59$ [$\phantom{-}8.09$, $\phantom{-}13.15$] \\
+\addlinespace
+\textit{Original visit type} & \\
+\quad Urgent, admitted & $\phantom{-}52.51$ [$\phantom{-}43.90$, $\phantom{-}63.15$] \\
+\quad Urgent, discharged & $\phantom{-}11.23$ [$\phantom{-}5.34$, $\phantom{-}17.93$] \\
+\quad Non-urgent, admitted & $\phantom{-}8.50$ [$\phantom{-}4.12$, $\phantom{-}13.36$] \\
+\quad Non-urgent, discharged & $\phantom{-}4.27$ [$\phantom{-}2.86$, $\phantom{-}5.95$] \\
+\addlinespace
+\textit{Counterfactual visit type} & \\
+\quad Urgent, admitted & $\phantom{-}38.58$ [$\phantom{-}30.10$, $\phantom{-}48.67$] \\
+\quad Urgent, discharged & $\phantom{-}35.85$ [$\phantom{-}30.14$, $\phantom{-}42.58$] \\
+\quad Non-urgent, admitted & $\phantom{-}24.64$ [$\phantom{-}19.48$, $\phantom{-}30.40$] \\
+\quad Non-urgent, discharged & $-4.52$ [$-5.93$, $-2.98$] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\textit{     I would suggest to create a table for the cohort stats currently described in a paragraph (section 3.3).}
+We are very happy to do this if space allows.
+\textit{
+     Current line 355-356 seems to be misplaced (should be after the current line 380).}
+We thank the reviewer for their attention to detail here; we have caught this.
+
